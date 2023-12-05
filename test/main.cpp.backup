@@ -1,0 +1,158 @@
+/***
+ * SPDX-License-Identifier: MIT
+ * 
+ * 智能教室控制系统，能够实时读取室内温湿度，并实现按照人员分布开关灯。
+ * 
+ * 串口通讯格式：
+ *      后端查询温度、湿度、气压、光照强度：
+ *      后端向前端发送字符串： "query env"
+ *      后端向前端返回字符串： "env,温度,湿度,气压,光照强度" 均为浮点数
+ * 
+ *      后端控制灯亮灭：
+ *      后端："control led on" "control led off"
+ *      返回："ok" "fail"
+ * 
+ *      后端控制显示字符串：
+ *      后端："control lcd 字符串"
+ *      前端："ok" "fail"
+ * 
+ * 
+*/
+
+
+#include <Arduino.h>
+// #include <Wire.h>
+// #include <LiquidCrystal.h>
+// #include <Adafruit_BMP085.h>
+// #include <SPI.h>
+// #include <DHT.h>
+#include <Arduino_FreeRTOS.h>
+
+// **** 硬件控制信息声明区 ****
+
+void(* resetFunc) (void) = 0;   // 在地址 0 位置声明 reset 函数
+
+const int DHT11_PIN = 4;        // 温湿度传感器引脚
+const int GP2D12_PIN = A0;      // 红外传感器引脚
+const int BUZZER_PIN = 5;       // 蜂鸣器引脚
+const int LDR_PIN = A1;         // 光敏传感器引脚
+
+// Adafruit_BMP085 bmp;            // 气压传感器控制声明
+// DHT dht(DHT11_PIN, DHT11);      // 温湿度传感器控制声明
+
+
+// **** 数据存储声明区 ****
+
+struct ALL_DATA {
+    float temp;     // 温度
+    float hum;      // 湿度
+    float light;    // 光照强度
+    int32_t press;  // 气压
+} env_data {0, 0, 0, 0};         // 环境数据
+
+
+
+// **** 函数以及进程句柄声明区 ****
+
+void start_task_func(void* pvParameters);   // 用于启动其他进程
+TaskHandle_t start_task_handler;
+
+void serial_com_func(void* pvParameters);   // 处理串口交互信息
+TaskHandle_t serial_com_handler;
+
+void env_read_func(void* pvParameters);    // 读取温度信息
+TaskHandle_t env_read_handler;
+
+bool control_func(String comdata);          // 处理控制信息
+String read_com_data_func();                // 读取串口信息
+
+void setup() {
+    Serial.setTimeout(100); // 设置串口超时时间 100ms
+    Serial.begin(9600); // 初始化串口，波特率为 9600
+    // dht.begin();
+    xTaskCreate (start_task_func,
+        "start_task_func",
+        128,
+        NULL,
+        1,
+        &start_task_handler
+    );    
+}
+
+
+void loop() {
+    if (Serial) Serial.begin(9600);
+    Serial.println("In Loop!");
+    Serial.end();
+    resetFunc();
+}
+
+void start_task_func(void *pvParameters) {
+    taskENTER_CRITICAL();
+
+    xTaskCreate (serial_com_func,
+        "serial_com_func",
+        64,
+        NULL,
+        3,
+        &serial_com_handler
+    );
+    xTaskCreate (env_read_func,
+        "env_read_func",
+        64,
+        NULL,
+        3,
+        &env_read_handler
+    );
+
+    vTaskDelete(start_task_handler);
+    taskEXIT_CRITICAL();    
+}
+
+void serial_com_func(void *pvParameters) {
+    String comdata; // 存储串口数据
+    // while(true) {};
+    for(;;) {
+        comdata = read_com_data_func();
+
+        if (comdata.length()>0) {
+            if(comdata[0] == 'q') {
+                Serial.print("env ");
+                Serial.print(',');
+                Serial.print(env_data.temp);
+                Serial.print(',');
+                Serial.print(env_data.hum);
+                Serial.print(',');
+                Serial.print(env_data.press);
+                Serial.print(',');
+                Serial.println(env_data.light);
+            }
+            else if(comdata[0] == 'c') {
+                Serial.println(comdata); // 输出调试函数
+                control_func(comdata);
+            }
+            else {
+                Serial.println(comdata); // 输出调试函数
+            }
+        }
+    }
+
+}
+
+bool control_func(String comdata) {
+    return true;
+}
+
+String read_com_data_func() {
+    String comdata;
+    while (Serial.available() == 0) {};
+    // comdata = Serial.readStringUntil('\n');
+    comdata = Serial.readString();
+    return comdata;
+}
+
+void env_read_func(void *pvParameters) {
+    Serial.println(F("Read from DHT sensor!"));
+    // env_data.hum = dht.readHumidity();
+    // env_data.temp = dht.readTemperature();
+}
