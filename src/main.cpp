@@ -7,6 +7,8 @@
  !      关于此调度方式的详情可在 https://www.freertos.org/zh-cn-cmn-s/a00110.html 中找到。
  ! FreeRTOS的配置文件是 .pio\libdeps\uno\FreeRTOS\src\FreeRTOSConfig.h （需要完成依赖安装） 
  !
+ ! Proteus 中，单片机的ELF文件路径为 ..\.pio\build\uno\firmware.elf
+ !
  ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!!! Attention !!!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
  * 
@@ -58,7 +60,7 @@ struct ALL_DATA {
 
 class LED_CON {
 private:
-    enum LightType {off, track, allon, alone};            // 灯的控制状态，全关，跟踪，全开，单独控制
+    enum LightType {off, track, allon, alone};  // 灯的控制状态，全关，跟踪，全开，单独控制
     const int led_pin[LED_NUM] {6, 7, 8, 9};    // 灯的引脚
     const int led_num {LED_NUM};                // 灯的数量
     bool led_state[LED_NUM];                    // 每个灯的状态
@@ -71,33 +73,21 @@ public:
     bool set_off();                     // 设置全关
     bool set_allon();                   // 设置全开
     bool set_track();                   // 设置跟踪
-    bool set_alone(int n, bool state);              // 设置单独开关某一个
+    bool set_alone(int n, bool state);  // 设置单独开关某一个
     bool change_position(int position); // 改变灯光跟踪位置
-    String query_led_state();                 // 查看灯光开关状态
+    String query_led_state();           // 查看灯光开关状态
 }led_control;
 
 // **** 函数以及进程句柄声明区 ****
 
-void start_task_func(void* pvParameters);       // 用于启动其他进程
-TaskHandle_t start_task_handler;
-
 void serial_send_func(void* pvParameters);      // 处理串口交互信息
 TaskHandle_t serial_send_handler;
 
-void env_read_func(void* pvParameters);         // 从硬件中读取温度信息
+void env_read_func(void* pvParameters);         // 从硬件中读取环境信息
 TaskHandle_t env_read_handler;
 
 void distance_read_func(void* pvParameters);    // 红外传感器读取位置
 TaskHandle_t distance_read_handler;
-
-void blank_func(void* pvParameters)             // 空白函数，用于任务调度；
-{
-    while(1){
-        Serial.println("Blank!");
-        taskYIELD();
-    }
-}
-TaskHandle_t blank_handler;
 
 bool control_func(String comdata);          // 处理控制信息
 String serial_read_func();                  // 读取串口信息
@@ -108,26 +98,9 @@ String env_to_string_func();                // 将存储的信息以 env 格式�
 
 void setup() {
     Serial.setTimeout(100); // 设置串口超时时间 100ms
-    Serial.begin(9600); // 初始化串口，波特率为 9600
+    Serial.begin(9600);     // 初始化串口，波特率为 9600
     led_control.init();
-    xTaskCreate (start_task_func,
-        "start_task_func",
-        128,
-        NULL,
-        1,
-        &start_task_handler
-    );
-
-}
-
-
-void loop() {
-    resetFunc();
-}
-
-void start_task_func(void *pvParameters) {
-    taskENTER_CRITICAL();
-
+    
     xTaskCreate (env_read_func,
         "env_read_func",
         128,
@@ -150,8 +123,11 @@ void start_task_func(void *pvParameters) {
         &distance_read_handler
     );
 
-    vTaskDelete(start_task_handler);
-    taskEXIT_CRITICAL();    
+}
+
+
+void loop() {
+    resetFunc();
 }
 
 void serial_send_func(void *pvParameters) {
@@ -223,16 +199,8 @@ void env_read_func(void *pvParameters) {
         // Serial.println("Start to Read env!");  // debug
         env_data.press = bmp.readPressure();
         env_data.light = analogRead(LDR_PIN);
-        for(int t = 1; ;++t){
-            env_data.hum = dht.readHumidity();
-            env_data.temp = dht.readTemperature();
-            if(isnan(env_data.hum) || isnan(env_data.temp)){
-                Serial.print(millis());
-                Serial.println(" Read Fail!");
-                vTaskDelay(t * portTICK_PERIOD_MS);
-            }
-            else break;
-        }
+        env_data.hum = dht.readHumidity();
+        env_data.temp = dht.readTemperature();
         // Serial.println("ENV READ SUCCESS!"); // debug
         vTaskDelay(2 * portTICK_PERIOD_MS);
         // taskYIELD();
