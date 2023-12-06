@@ -3,7 +3,10 @@
 
 哈尔滨工程大学（哈工程）计算机科学与技术学院大四嵌入式作业。使用 FreeRTOS 作为 Arduino UNO 开发版的操作系统，修改了 FreeRTOS 内核设置。
 使用了协作式CPU调度方案，实现三线程协作式调度，可用 vTaskDelay （或 delay ） 函数。
-Release 版本经过测试，可直接运行，运行环境见后。
+
+Release 版本经过测试，可正常运行，测试环境见后。
+
+[点击此处查看最新 Release 版本](https://github.com/yao9e/HEUCSEmbedded/releases/latest)
 
 ## 项目结构
 ``` 
