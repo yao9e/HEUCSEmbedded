@@ -1,4 +1,4 @@
-# HEU 6系 嵌入式课设（Arduino 及仿真部分）
+# HEU 6系 嵌入式课设（ Arduino 程序及仿真部分）
 2023年12月6日20:27:27
 
 哈尔滨工程大学（哈工程）计算机科学与技术学院大四嵌入式作业。使用 FreeRTOS 作为 Arduino UNO 开发版的操作系统，修改了 FreeRTOS 内核设置。
@@ -38,7 +38,7 @@ Release 版本经过测试，可直接运行，运行环境见后。
 ```
 
 ## 使用方法
-本嵌入式下位机采用 PlatformIO 开发，请按照任课教师发的 `嵌入式技术课程设计Proteus实验指导书（带书签）.pdf 中的` 的 `3.3 使用 PlatformIO IDE 生成程序代码` 配置环境，或自行在网络上查找如何使用 PlatformIO 开发 Arduino 程序。
+本嵌入式下位机采用 PlatformIO 开发，请按照任课教师发的 `嵌入式技术课程设计Proteus实验指导书（带书签）.pdf` 中的 `3.3 使用 PlatformIO IDE 生成程序代码` 配置环境，或自行在网络上查找如何使用 PlatformIO 开发 Arduino 程序。
 
 1. 下载本项目，并解压;
 2. 在按照实验指导手册完成环境配置后，在 VS Code 的 PlatformIO 中打开本项目根目录（即存放有 `README.md` 文件的那一级目录;
