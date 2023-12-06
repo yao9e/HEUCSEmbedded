@@ -73,6 +73,25 @@ Release 版本已经过测试，测试环境如下：
 1. 在项目代码基础上增添功能时，有概率遇到无法仿真问题，包括但不限无法分配内存，内存溢出，请各位使用者自行解决。
 2. 在本项目基础上增添信号量或消息队列功能，有概率导致无法仿真，请自行解决
 
+## 串口通讯格式
+
+```C++
+/*
+ * 串口通讯格式：
+ *      后端查询温度、湿度、气压、光照强度：
+ *      后端向前端发送字符串： "query env"
+ *      后端向前端返回字符串： "env,温度,湿度,气压,光照强度,距离" 均为浮点数
+ * 
+ *      后端查询LED状态：
+ *      后端向前端发送字符串： "query led"
+ *      后端向前端返回字符串： "led,1,0,1,0,STATE" 1 代表开，0代表关，STATE 有四种：on、off、track、alone
+ * 
+ *      后端控制灯亮灭： 灯的序号从 0 开始，总共 4 盏灯
+ *      后端："control led on" "control led off" "control led track" "control led alone 灯的序号,0/1" 
+ *      返回："ok" "fail"
+*/
+```
+
 # 可用于 Arduino 的 FreeRTOS 移植版提示信息
 **Errors**
 - Stack Overflow: If any stack (for the loop() or) for any Task overflows, there will be a slow LED blink, with 4 second cycle.
