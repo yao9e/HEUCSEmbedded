@@ -38,6 +38,12 @@
 #include <DHT11.h>
 // #include <semphr.h>
 
+#if configUSE_PREEMPTION != 0
+    请注意，应当将 .pio\libdeps\uno\FreeRTOS\src\FreeRTOSConfig.h 中的 configUSE_PREEMPTION 定义为 0;
+    正确定义 configUSE_PREEMPTION 为 0 后，本文件将可以正常编译;
+    若你确认不更改此设置，程序也可以正常运行，那请删除此部分提示信息.
+#endif
+
 // **** 硬件控制信息声明区 ****
 
 void(* resetFunc) (void) = 0;   // 在地址 0 位置声明 reset 函数
