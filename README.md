@@ -1,5 +1,5 @@
 # HEU 6系 嵌入式课设（ Arduino 程序及仿真部分）
-2023年12月6日20:27:27
+2023年12月6日22:23:39
 
 哈尔滨工程大学（哈工程）计算机科学与技术学院大四嵌入式作业。使用 FreeRTOS 作为 Arduino UNO 开发版的操作系统，修改了 FreeRTOS 内核设置。
 使用了协作式CPU调度方案，实现三线程协作式调度，可用 vTaskDelay （或 delay ） 函数。
@@ -7,6 +7,18 @@
 Release 版本经过测试，可正常运行，测试环境见后。
 
 [点击此处查看最新 Release 版本](https://github.com/yao9e/HEUCSEmbedded/releases/latest)
+
+上位机使用 Flask 框架实现，详情可在 [MichistaLin](https://github.com/MichistaLin) 的项目 [IntelligentClassRoomProject](https://github.com/MichistaLin/IntelligentClassRoomProject) 中找到。
+
+## 项目简述
+
+基于 Arduino 的教室智能照明系统，能够实时读取室内环境信息，并实现按照人员分布开关灯。下位机可实现的功能：
+1. 读取环境信息
+2. 调整灯光设置 on、off、track、alone
+    * 灯光全开 `on`
+    * 灯光全关 `off`
+    * 按照红外传感器的距离信息调整点亮的 LED 灯 `track`
+    * 独立控制各个 LED 灯的开关 `alone`
 
 ## 项目结构
 ``` 
@@ -104,4 +116,4 @@ Release 版本已经过测试，测试环境如下：
 你可在其中找到更多关于 FreeRTOS 的信息。
 
 # Contact
-若你在使用过程中遇到任何问题，请使用 Issue 提出，或给 yao9e@outlook.com 邮箱发送邮件。
+若你在使用过程中遇到任何问题，请在 Issues 中提出，或给 yao9e@outlook.com 邮箱发送邮件。
