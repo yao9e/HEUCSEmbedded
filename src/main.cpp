@@ -15,16 +15,16 @@
  * 智能教室控制系统，能够实时读取室内温湿度，并实现按照人员分布开关灯。
  * 
  * 串口通讯格式：
- *      后端查询温度、湿度、气压、光照强度：
- *      后端向前端发送字符串： "query env"
- *      后端向前端返回字符串： "env,温度,湿度,气压,光照强度,距离" 均为浮点数
+ *      上位机查询温度、湿度、气压、光照强度：
+ *      上位机向下位机发送字符串： "query env"
+ *      上位机向下位机返回字符串： "env,温度,湿度,气压,光照强度,距离" 均为浮点数
  * 
- *      后端查询LED状态：
- *      后端向前端发送字符串： "query led"
- *      后端向前端返回字符串： "led,1,0,1,0,STATE" 1 代表开，0代表关，STATE 有四种：on、off、track、alone
+ *      上位机查询LED状态：
+ *      上位机向下位机发送字符串： "query led"
+ *      上位机向下位机返回字符串： "led,1,0,1,0,STATE" 1 代表开，0代表关，STATE 有四种：on、off、track、alone
  * 
- *      后端控制灯亮灭： 灯的序号从 0 开始，总共 4 盏灯
- *      后端："control led on" "control led off" "control led track" "control led alone 灯的序号,0/1" 
+ *      上位机控制灯亮灭： 灯的序号从 0 开始，总共 4 盏灯
+ *      上位机："control led on" "control led off" "control led track" "control led alone 灯的序号,0/1" 
  *      返回："ok" "fail"
  * 
 */

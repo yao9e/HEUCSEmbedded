@@ -57,11 +57,11 @@ Release 版本经过测试，可正常运行，测试环境见后。
 
 1. 下载本项目，并解压;
 2. 在按照实验指导手册完成环境配置后，在 VS Code 的 PlatformIO 中打开本项目根目录（即存放有 `README.md` 文件的那一级目录;
-3. 若请等待 PlatformIO 加载，若网络环境良好，PlatformIO 会自动在 5min 内项目加载与依赖库安装;
+3. 若请等待 PlatformIO 加载，若网络环境良好，PlatformIO 会自动在 5min 内完成加载与依赖库的安装;
 4. 按照`main.cpp`中的说明修改内核配置后，编译本项目（左下角或右上角的 √ Build 符号）;
 5. 使用 Proteus 8 打开 位于 proteus 文件夹中的 Proteus 工程文件，文件名为 `FinalWork.pdsprj`;
 6. 将 PlatformIO 生成的 ELF 或 HEX 文件载入控制器中（双击仿真文件中的最大的那个方形元件，在 Program Flie 中填入 `..\.pio\build\uno\firmware.elf`;
-7. 运行仿真即可，可使用 XCOM 进行串口通讯，Proteus 仿真文件默认使用 COM1 串口;
+7. 运行仿真即可，仿真运行成功后，可使用 XCOM 等串口调试工具进行测试，通讯格式见下。
 
 main.cpp 中的重要提示信息：
 ``` C++
@@ -93,16 +93,16 @@ Release 版本已经过测试，测试环境如下：
 ```C++
 /*
  * 串口通讯格式：
- *      后端查询温度、湿度、气压、光照强度：
- *      后端向前端发送字符串： "query env"
- *      后端向前端返回字符串： "env,温度,湿度,气压,光照强度,距离" 均为浮点数
+ *      上位机查询温度、湿度、气压、光照强度：
+ *      上位机向下位机发送字符串： "query env"
+ *      上位机向下位机返回字符串： "env,温度,湿度,气压,光照强度,距离" 均为浮点数
  * 
- *      后端查询LED状态：
- *      后端向前端发送字符串： "query led"
- *      后端向前端返回字符串： "led,1,0,1,0,STATE" 1 代表开，0代表关，STATE 有四种：on、off、track、alone
+ *      上位机查询LED状态：
+ *      上位机向下位机发送字符串： "query led"
+ *      上位机向下位机返回字符串： "led,1,0,1,0,STATE" 1 代表开，0代表关，STATE 有四种：on、off、track、alone
  * 
- *      后端控制灯亮灭： 灯的序号从 0 开始，总共 4 盏灯
- *      后端："control led on" "control led off" "control led track" "control led alone 灯的序号,0/1" 
+ *      上位机控制灯亮灭： 灯的序号从 0 开始，总共 4 盏灯
+ *      上位机："control led on" "control led off" "control led track" "control led alone 灯的序号,0/1" 
  *      返回："ok" "fail"
 */
 ```
